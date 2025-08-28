@@ -71,7 +71,6 @@ typedef struct _TKLOG_GLOBALS {
     KSPIN_LOCK GlobalLock;
     LIST_ENTRY LoggerListHead;
     BOOLEAN IsInitialized;
-    PDRIVER_OBJECT DriverObject;
 } TKLOG_GLOBALS;
 
 //=============================================================================
@@ -501,12 +500,8 @@ TKLogp_FormatFinalMessage(
 
 _Use_decl_annotations_
 NTSTATUS
-TKLog_Init(
-    _In_ PDRIVER_OBJECT DriverObject,
-    _In_opt_ PUNICODE_STRING RegistryPath
-)
+TKLog_Init()
 {
-    UNREFERENCED_PARAMETER(RegistryPath);
     PAGED_CODE();
 
     if (g_TKLog.IsInitialized)
@@ -515,7 +510,6 @@ TKLog_Init(
     }
 
     RtlZeroMemory(&g_TKLog, sizeof(g_TKLog));
-    g_TKLog.DriverObject = DriverObject;
     KeInitializeSpinLock(&g_TKLog.GlobalLock);
     InitializeListHead(&g_TKLog.LoggerListHead);
     g_TKLog.IsInitialized = TRUE;
@@ -550,7 +544,6 @@ TKLog_Shutdown(VOID)
     KeReleaseSpinLock(&g_TKLog.GlobalLock, oldIrql);
 
     g_TKLog.IsInitialized = FALSE;
-    g_TKLog.DriverObject = NULL;
 }
 
 // Dumps the contents of the ring buffer for a given logger instance.
@@ -737,7 +730,7 @@ TKLog_WriteInternal(
     _In_ HTKLOG LoggerHandle,
     _In_ TKLOG_LEVEL Level,
     _In_ TKLOG_CATEGORY Category,
-    _In_ _Printf_format_string_ PCSTR Format,
+    _In_ PCSTR Format,
     ...
 )
 {
@@ -807,7 +800,7 @@ TKLog_WriteEx(
     _In_opt_ PCSTR FunctionName,
     _In_opt_ PCSTR FileName,
     _In_ ULONG LineNumber,
-    _In_ _Printf_format_string_ PCSTR Format,
+    _In_ PCSTR Format,
     ...
 )
 {
