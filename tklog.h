@@ -96,10 +96,7 @@ extern "C" {
     // Initializes the TKLOG library globally. Must be called once in the driver's DriverEntry.
     _Check_return_
         NTSTATUS
-        TKLog_Init(
-            _In_ PDRIVER_OBJECT DriverObject,
-            _In_opt_ PUNICODE_STRING RegistryPath
-        );
+        TKLog_Init(VOID);
 
     // Creates a new logger instance with the specified configuration.
     _Check_return_
