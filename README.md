@@ -37,7 +37,7 @@ DriverEntry(
     NTSTATUS status;
     
     // 1. Initialize the TKLOG library
-    status = TKLog_Init(DriverObject, RegistryPath);
+    status = TKLog_Init();
     if (!NT_SUCCESS(status)) {
         // Fail early if init fails
         return status;
